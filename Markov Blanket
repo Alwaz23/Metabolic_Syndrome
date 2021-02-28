@@ -1,0 +1,79 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Symmetrical graphical network %%%%%%%%%%%%%%%%%%
+% store indices of drug targets in an array named index %
+% store optimal directed graph in Undir_C %
+Parent_node=[];
+Child_node = [];
+Spouse_node = [];
+k = 0;
+if true
+for a = index'
+    Child_node =  successors(Undir_C,a);
+    for  k = k+1
+    c{k} = Child_node;
+    end
+end
+end
+k = 0;
+if true
+for a = index'
+    Parent_node =  predecessors(Undir_C,a);
+    for  k = k+1
+    p{k} = Parent_node;
+    end
+end
+end
+k = 0;
+i = 0;
+for k = 1:326 %set according to number of nodes whose markov blanket is to be marked
+    i = i+1;
+for a = c{k}'
+    Spouse_node = [Spouse_node;predecessors(Undir_C,a)];
+    s{i} = Spouse_node;
+end
+Spouse_node = [];
+end
+clear a
+clear index
+clear Child_node
+clear i
+clear index
+clear k 
+clear Parent_node
+clear Spouse_node
+for k = 1:326 %set according to number of targets
+    Semifinal{k} = [p{k};c{k};s{k}];
+    [Cell{k},Index_cell{k},Index_all{k}] = unique(Semifinal{k});
+    Semifinal{k} = Cell{k};
+end
+final = [];
+for k = 1:326 %set according to number of targets
+final =  [final;Semifinal{k}];
+end
+[Cell,Index_cell,Index_all] = unique(final);
+FinalBlanket = tabulate(Index_all); 
+[genes_frequencies,genesindex] = sort(FinalBlanket(:,2),'descend');  
+frequencies = genes_frequencies(:);
+names = genenames(Cell(genesindex));
+%%%%%%%%%%% To find to which drug targets are pivotal interconnected genes connected %%%%%%%%%%%%%%%%%
+ % store indices of pivotal interconnected genec in an array named InterconnectedGenes %
+n=length(InterconnectedGenes);
+c=[];
+p=1;
+b=[];
+    for j=1:n
+    for k=1:32
+    x=find(Semifinal{1,k}==InterconnectedGenes(j));
+    if isempty(x)
+    b=[b 0];
+    else
+    b=[b x];
+    end
+    end
+    c(p,:)=b; 
+    p=p+1;
+    b=[];  
+    end
+ % name all drug targets in string in an array named targets %
+C = c(1,:);
+find(C~=0);
+target = targets(ans);
