@@ -1,0 +1,198 @@
+                            %METABOLIC SYNDROME%% 
+GEOData = geoseriesread('GSE44000.txt');
+Data=GEOData.Data;
+MetData=Data(:,1:14);
+genenames=MetData.rownames;
+MetData = zscore(MetData.double());
+MetData1 = mat2gray(MetData);
+MetDataD = MetData1(:,1:7);
+MetDataND = MetData1(:,8:14);
+mean_D= mean(MetDataD,2);
+mean_ND= mean(MetDataND,2);
+difference = abs(mean_D-mean_ND) < 0.000029;
+lowvargenes = find(difference==1);
+lowvariancegenes = numel(lowvargenes);
+MetData(difference,:) = [];
+genenames(difference,:) = [];
+clear GEOData
+clear Data 
+clear mean_D
+clear mean_ND
+clear lowvargenes
+clear difference
+clear MetData1
+                            %Diseased%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MetDataD = MetData(:,1:7);
+TMetDataD=transpose(MetDataD.double());
+clear MetDataD
+clear MetData
+clear MetDataND
+                          %Pearson%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorrMetDataP= corr(TMetDataD,'type','Pearson');
+FinalCorrMetDataP = abs(CorrMetDataP);
+FinalCorrMetDataP= FinalCorrMetDataP - diag(diag(FinalCorrMetDataP));
+FinalCorrMetDataP(FinalCorrMetDataP<=0.85)= 0;
+FinalCorrMetDataP(FinalCorrMetDataP>0.85) = 1;
+UndirP=graph(FinalCorrMetDataP,genenames,'upper');
+clear CorrMetDataP
+clear FinalCorrMetDataP
+CD = centrality(UndirP,'degree');
+CC = centrality(UndirP,'closeness');
+CB = centrality(UndirP,'betweenness'); 
+CE = centrality(UndirP,'eigenvector');      
+clear UndirP
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %DEGREE CENTRALITY%
+[Pearson_CD,Index_P_CD] = sort(CD,'descend');
+pearson1 = Pearson_CD(:);
+pearsongenes1 =genenames(Index_P_CD(:));
+top_pearson1 = Pearson_CD(1:401,:);
+top_pearsongenes1 =genenames(Index_P_CD(1:401,:));
+clear Index_P_CD
+clear Pearson_CD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %CLOSENESS CENTRALITY%
+[Pearson_CC,Index_P_CC] = sort(CC,'descend');
+pearson2 = Pearson_CC(:);
+pearsongenes2 =genenames(Index_P_CC(:));
+top_pearson2 = Pearson_CC(1:405,:);
+top_pearsongenes2 =genenames(Index_P_CC(1:405,:));
+clear Index_P_CC
+clear Pearson_CC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %BETWEENNESS CENTRALITY%
+[Pearson_CB,Index_P_CB] = sort(CB,'descend');
+pearson3 = Pearson_CB(:);
+pearsongenes3 =genenames(Index_P_CB(:));
+top_pearson3 = Pearson_CB(1:400,:);
+top_pearsongenes3 =genenames(Index_P_CB(1:400,:));
+clear Index_P_CB 
+clear Pearson_CB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %EIGENVECTOR CENTRALITY%
+[Pearson_CE,Index_P_CE] = sort(CE,'descend');
+pearson4 = Pearson_CE(:);
+pearsongenes4 =genenames(Index_P_CE(:));
+top_pearson4 = Pearson_CE(1:400,:);
+top_pearsongenes4 =genenames(Index_P_CE(1:400,:));
+clear Index_P_CE
+clear Pearson_CE
+                     %Spearman%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorrMetDataS= corr(TMetDataD,'type','Spearman');
+FinalCorrMetDataS = abs(CorrMetDataS);
+FinalCorrMetDataS= FinalCorrMetDataS - diag(diag(FinalCorrMetDataS));
+FinalCorrMetDataS(FinalCorrMetDataS<=0.85)= 0;
+FinalCorrMetDataS(FinalCorrMetDataS>0.85) = 1;
+clear CorrMetDataS
+UndirS=graph(FinalCorrMetDataS,genenames,'upper');
+clear FinalCorrMetDataS
+CD = centrality(UndirS,'degree');
+CC = centrality(UndirS,'closeness');
+CB = centrality(UndirS,'betweenness');  
+CE = centrality(UndirS,'eigenvector');
+clear UndirS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %DEGREE CENTRALITY%
+[Spearman_CD,Index_S_CD] = sort(CD,'descend');
+spearman1 = Spearman_CD(:);
+spearmangenes1 =genenames(Index_S_CD(:));
+top_spearman1 = Spearman_CD(1:401,:);
+top_spearmangenes1 =genenames(Index_S_CD(1:401,:));
+clear Index_S_CD
+clear Spearman_CD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %CLOSENESS CENTRALITY%
+[Spearman_CC,Index_S_CC] = sort(CC,'descend');
+spearman2 = Spearman_CC(:);
+spearmangenes2 =genenames(Index_S_CC(:));
+top_spearman2 = Spearman_CC(1:423,:);
+top_spearmangenes2 =genenames(Index_S_CC(1:423,:));
+clear Index_S_CC
+clear Spearman_CC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %BETWEENNESS CENTRALITY%
+[Spearman_CB,Index_S_CB] = sort(CB,'descend');
+spearman3 = Spearman_CB(:);
+spearmangenes3 =genenames(Index_S_CB(:));
+top_spearman3 = Spearman_CB(1:404,:);
+top_spearmangenes3 =genenames(Index_S_CB(1:404,:));
+clear Index_S_CB
+clear Spearman_CB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %EIGENVECTOR CENTRALITY%
+[Spearman_CE,Index_S_CE] = sort(CE,'descend');
+spearman4 = Spearman_CE(:);
+spearmangenes4 =genenames(Index_S_CE(:));
+top_spearman4 = Spearman_CE(1:435,:);
+top_spearmangenes4 =genenames(Index_S_CE(1:435,:));
+clear Index_S_CE
+clear Spearman_CE
+
+                    %Kendall Tau%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorrMetDataK= corr(TMetDataD,'type','kendall');
+FinalCorrMetDataK = abs(CorrMetDataK);
+FinalCorrMetDataK= FinalCorrMetDataK - diag(diag(FinalCorrMetDataK));
+FinalCorrMetDataK(FinalCorrMetDataK<=0.85)= 0;
+FinalCorrMetDataK(FinalCorrMetDataK>0.85) = 1;
+UndirK=graph(FinalCorrMetDataK,genenames,'upper');
+clear CorrMetDataK
+clear FinalCorrMetDataK
+CD = centrality(UndirK,'degree');
+CC = centrality(UndirK,'closeness');
+CB = centrality(UndirK,'betweenness'); 
+CE = centrality(UndirK,'eigenvector');      
+clear UndirK
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %DEGREE CENTRALITY%
+[Kendall_CD,Index_K_CD] = sort(CD,'descend');
+Kendall1 = Kendall_CD(:);
+Kendallgenes1 =genenames(Index_K_CD(:));
+top_Kendall1 = Kendall_CD(1:418,:);
+top_Kendallgenes1 =genenames(Index_K_CD(1:418,:));
+clear Index_K_CD
+clear Kendall_CD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %CLOSENESS CENTRALITY%
+[Kendall_CC,Index_K_CC] = sort(CC,'descend');
+Kendall2 = Kendall_CC(:);
+Kendallgenes2 =genenames(Index_K_CC(:));
+top_Kendall2 = Kendall_CC(1:410,:);
+top_Kendallgenes2 =genenames(Index_K_CC(1:410,:));
+clear Index_K_CC
+clear Kendall_CC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %BETWEENNESS CENTRALITY%
+[Kendall_CB,Index_K_CB] = sort(CB,'descend');
+Kendall3 = Kendall_CB(:);
+Kendallgenes3 =genenames(Index_K_CB(:));
+top_Kendall3 = Kendall_CB(1:400,:);
+top_Kendallgenes3 =genenames(Index_K_CB(1:400,:));
+clear Index_K_CB
+clear Kendall_CB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %EIGENVECTOR CENTRALITY%
+[Kendall_CE,Index_K_CE] = sort(CE,'descend');
+Kendall4 = Kendall_CE(:);
+Kendallgenes4 =genenames(Index_K_CE(:));
+top_Kendall4 = Kendall_CE(1:403,:);
+top_Kendallgenes4 =genenames(Index_K_CE(1:403,:));
+clear Index_K_CE
+clear Kendall_CE
+clear Kendall_D
+clear FinalK
+clear CB
+clear CC
+clear CD
+clear CE
+clear Cell
+clear genesindex
+clear genes_frequencies
+clear Index_all
+clear Index_cell
+clear genenames
+clear TMetDataD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
