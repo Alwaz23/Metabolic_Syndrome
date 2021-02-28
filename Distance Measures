@@ -1,0 +1,308 @@
+                    %METABOLIC SYNDROME%% 
+GEOData = geoseriesread('GSE44000.txt');
+Data=GEOData.Data;
+MetData=Data(:,1:14);
+genenames=MetData.rownames;
+MetData = zscore(MetData.double());
+MetData1 = mat2gray(MetData);
+MetDataD = MetData1(:,1:7);
+MetDataND = MetData1(:,8:14);
+mean_D= mean(MetDataD,2);
+mean_ND= mean(MetDataND,2);
+difference = abs(mean_D-mean_ND) < 0.000029;
+lowvargenes = find(difference==1);
+lowvariancegenes = numel(lowvargenes);
+MetData(difference,:) = [];
+genenames(difference,:) = [];
+clear GEOData
+clear Data 
+clear mean_D
+clear mean_ND
+clear lowvargenes
+clear difference
+clear MetData1
+                            %Diseased%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MetDataD = MetData(:,1:7);
+clear MetData
+clear MetDataND
+                     %Euclidean%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DisMetData_E = pdist(MetDataD,'euclidean');
+FinalDisMetData_E = squareform(DisMetData_E);
+Threshold = 1.53;
+FinalDisMetData_E(FinalDisMetData_E<Threshold) = 1;
+FinalDisMetData_E(FinalDisMetData_E~=1) = 0;
+FinalDisMetData_E = FinalDisMetData_E - diag(diag(FinalDisMetData_E));
+clear DisMetData_E
+clear Threshold
+Undir_E=graph(FinalDisMetData_E,genenames,'upper');
+clear FinalDisMetData_E
+CD = centrality(Undir_E,'degree');
+CC = centrality(Undir_E,'closeness');
+CE = centrality(Undir_E,'eigenvector');
+CB = centrality(Undir_E,'betweenness');       
+clear Undir_E
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %DEGREE CENTRALITY%
+[Euclidean_CD,Index_E_CD] = sort(CD,'descend');
+Euclidean1 = Euclidean_CD(:);
+Euclideangenes1 =genenames(Index_E_CD(:));
+top_euclidean1 = Euclidean_CD(1:402,:);
+top_euclideangenes1 =genenames(Index_E_CD(1:402,:));
+clear Euclidean_CD
+clear Index_E_CD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %CLOSENESS CENTRALITY%
+[Euclidean_CC,Index_E_CC] = sort(CC,'descend');
+Euclidean2 = Euclidean_CC(:);
+Euclideangenes2 =genenames(Index_E_CC(:));
+top_euclidean2 = Euclidean_CC(1:401,:);
+top_euclideangenes2 =genenames(Index_E_CC(1:401,:));
+clear Euclidean_CC
+clear Index_E_CC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %BETWEENNESS CENTRALITY%
+[Euclidean_CB,Index_E_CB] = sort(CB,'descend');
+Euclidean3 = Euclidean_CB(:);
+Euclideangenes3 =genenames(Index_E_CB(:));
+top_euclidean3 = Euclidean_CB(1:400,:);
+top_euclideangenes3 =genenames(Index_E_CB(1:400,:));
+clear Euclidean_CB
+clear Index_E_CB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %EIGENVECTOR CENTRALITY%
+[Euclidean_CE,Index_E_CE] = sort(CE,'descend');
+Euclidean4 = Euclidean_CE(:);
+Euclideangenes4 =genenames(Index_E_CE(:));
+top_euclidean4 = Euclidean_CE(1:400,:);
+top_euclideangenes4 =genenames(Index_E_CE(1:400,:));
+clear Euclidean_CE
+clear Index_E_CE
+                     %Cosine%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DisMetData_C = pdist(MetDataD,'Cosine');
+FinalDisMetData_C = squareform(DisMetData_C);
+clear DisMetData_C
+Threshold = 0.15;
+FinalDisMetData_C(FinalDisMetData_C<Threshold) = 1;
+FinalDisMetData_C(FinalDisMetData_C~=1) = 0;
+FinalDisMetData_C = FinalDisMetData_C - diag(diag(FinalDisMetData_C));
+clear Threshold
+Undir_C=graph(FinalDisMetData_C,genenames,'upper');
+clear FinalDisMetData_C
+CD = centrality(Undir_C,'degree');
+CC = centrality(Undir_C,'closeness');
+CE = centrality(Undir_C,'eigenvector');
+CB = centrality(Undir_C,'betweenness');       
+clear Undir_C
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %DEGREE CENTRALITY%
+[Cosine_CD,Index_C_CD] = sort(CD,'descend');
+Cosine1 = Cosine_CD(:);
+Cosinegenes1 =genenames(Index_C_CD(:));
+top_Cosine1 = Cosine_CD(1:402,:);
+top_Cosinegenes1 =genenames(Index_C_CD(1:402,:));
+clear Cosine_CD
+clear Index_C_CD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %CLOSENESS CENTRALITY%
+[Cosine_CC,Index_C_CC] = sort(CC,'descend');
+Cosine2 = Cosine_CC(:);
+Cosinegenes2 =genenames(Index_C_CC(:));
+top_Cosine2 = Cosine_CC(1:402,:);
+top_Cosinegenes2 =genenames(Index_C_CC(1:402,:));
+clear Cosine_CC
+clear Index_C_CC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %BETWEENNESS CENTRALITY%
+[Cosine_CB,Index_C_CB] = sort(CB,'descend');
+Cosine3 = Cosine_CB(:);
+Cosinegenes3 =genenames(Index_C_CB(:));
+top_Cosine3 = Cosine_CB(1:400,:);
+top_Cosinegenes3 =genenames(Index_C_CB(1:400,:));
+clear Cosine_CB
+clear Index_C_CB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %EIGENVECTOR CENTRALITY%
+[Cosine_CE,Index_C_CE] = sort(CE,'descend');
+Cosine4 = Cosine_CE(:);
+Cosinegenes4 =genenames(Index_C_CE(:));
+top_Cosine4 = Cosine_CE(1:400,:);
+top_Cosinegenes4 =genenames(Index_C_CE(1:400,:));
+clear Cosine_CE
+clear Index_C_CE
+
+                 %Mahalanobis%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DisMetData_Mh = pdist(MetDataD,'Mahalanobis');
+FinalDisMetData_Mh = squareform(DisMetData_Mh);
+Threshold = 1.83;
+FinalDisMetData_Mh(FinalDisMetData_Mh<Threshold) = 1;
+FinalDisMetData_Mh(FinalDisMetData_Mh~=1) = 0;
+FinalDisMetData_Mh = FinalDisMetData_Mh - diag(diag(FinalDisMetData_Mh));
+clear DisMetData_Mh
+clear Threshold
+Undir_Mh=graph(FinalDisMetData_Mh,genenames,'upper');
+clear FinalDisMetData_Mh
+CD = centrality(Undir_Mh,'degree');
+CC = centrality(Undir_Mh,'closeness');
+CE = centrality(Undir_Mh,'eigenvector');
+CB = centrality(Undir_Mh,'betweenness');       
+clear Undir_Mh
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %DEGREE CENTRALITY%
+[Mahalanobis_CD,Index_Mh_CD] = sort(CD,'descend');
+Mahalanobis1 = Mahalanobis_CD(:);
+Mahalanobisgenes1 =genenames(Index_Mh_CD(:));
+top_Mahalanobis1 = Mahalanobis_CD(1:402,:);
+top_Mahalanobisgenes1 =genenames(Index_Mh_CD(1:402,:));
+clear Mahalanobis_CD
+clear Index_Mh_CD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %CLOSENESS CENTRALITY%
+[Mahalanobis_CC,Index_Mh_CC] = sort(CC,'descend');
+Mahalanobis2 = Mahalanobis_CC(:);
+Mahalanobisgenes2 =genenames(Index_Mh_CC(:));
+top_Mahalanobis2 = Mahalanobis_CC(1:401,:);
+top_Mahalanobisgenes2 =genenames(Index_Mh_CC(1:401,:));
+clear Mahalanobis_CC
+clear Index_Mh_CC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %BETWEENNESS CENTRALITY%
+[Mahalanobis_CB,Index_Mh_CB] = sort(CB,'descend');
+Mahalanobis3 = Mahalanobis_CB(:);
+Mahalanobisgenes3 =genenames(Index_Mh_CB(:));
+top_Mahalanobis3 = Mahalanobis_CB(1:400,:);
+top_Mahalanobisgenes3 =genenames(Index_Mh_CB(1:400,:));
+clear Mahalanobis_CB
+clear Index_Mh_CB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %EIGENVECTOR CENTRALITY%
+[Mahalanobis_CE,Index_Mh_CE] = sort(CE,'descend');
+Mahalanobis4 = Mahalanobis_CE(:);
+Mahalanobisgenes4 =genenames(Index_Mh_CE(:));
+top_Mahalanobis4 = Mahalanobis_CE(1:400,:);
+top_Mahalanobisgenes4 =genenames(Index_Mh_CE(1:400,:));
+clear Mahalanobis_CE
+clear Index_Mh_CE
+                  %Minkowski% (p=1 i.e generalization for Manhattan)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DisMetData_Mi = pdist(MetDataD,'Minkowski',1);
+FinalDisMetData_Mi = squareform(DisMetData_Mi);
+Threshold = 3.3;
+FinalDisMetData_Mi(FinalDisMetData_Mi<Threshold) = 1;
+FinalDisMetData_Mi(FinalDisMetData_Mi~=1) = 0;
+FinalDisMetData_Mi = FinalDisMetData_Mi - diag(diag(FinalDisMetData_Mi));
+clear DisMetData_Mi
+clear Threshold
+Undir_Mi=graph(FinalDisMetData_Mi,genenames,'upper');
+clear FinalDisMetData_Mi
+CD = centrality(Undir_Mi,'degree');
+CC = centrality(Undir_Mi,'closeness');
+CE = centrality(Undir_Mi,'eigenvector');
+CB = centrality(Undir_Mi,'betweenness');       
+clear Undir_Mi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %DEGREE CENTRALITY%
+[Minkowski_CD,Index_Mi_CD] = sort(CD,'descend');
+Minkowski1 = Minkowski_CD(:);
+Minkowskigenes1 =genenames(Index_Mi_CD(:));
+top_Minkowski1 = Minkowski_CD(1:400,:);
+top_Minkowskigenes1 =genenames(Index_Mi_CD(1:400,:));
+clear Minkowksi_CD
+clear Index_Mi_CD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %CLOSENESS CENTRALITY%
+[Minkowski_CC,Index_Mi_CC] = sort(CC,'descend');
+Minkowski2 = Minkowski_CC(:);
+Minkowskigenes2 =genenames(Index_Mi_CC(:));
+top_Minkowski2 = Minkowksi_CC(1:401,:);
+top_Minkowskigenes2 =genenames(Index_Mi_CC(1:401,:));
+clear Minkowksi_CC
+clear Index_Mi_CC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %BETWEENNESS CENTRALITY%
+[Minkowski_CB,Index_Mi_CB] = sort(CB,'descend');
+Minkowski3 = Minkowski_CB(:);
+Minkowskigenes3 =genenames(Index_Mi_CB(:));
+top_Minkowski3 = Minkowski_CB(1:400,:);
+top_Minkowskigenes3 =genenames(Index_Mi_CB(1:400,:));
+clear Minkowksi_CB
+clear Index_Mi_CB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %EIGENVECTOR CENTRALITY%
+[Minkowski_CE,Index_Mi_CE] = sort(CE,'descend');
+Minkowski4 = Minkowski_CE(:);
+Minkowskigenes4 =genenames(Index_Mi_CE(:));
+top_Minkowski4 = Minkowski_CE(1:400,:);
+top_Minkowskigenes4 =genenames(Index_Mi_CE(1:400,:));
+clear Minkowksi_CE
+clear Index_Mi_CE
+
+                    %Chebyshev%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DisMetData_Ch = pdist(MetDataD,'chebychev');
+FinalDisMetData_Ch = squareform(DisMetData_Ch);
+Threshold = 1.03;
+FinalDisMetData_Ch(FinalDisMetData_Ch<Threshold) = 1;
+FinalDisMetData_Ch(FinalDisMetData_Ch~=1) = 0;
+FinalDisMetData_Ch = FinalDisMetData_Ch - diag(diag(FinalDisMetData_Ch));
+clear DisMetData_Ch
+clear Threshold
+Undir_Ch=graph(FinalDisMetData_Ch,genenames,'upper');
+clear FinalDisMetData_Ch
+CD = centrality(Undir_Ch,'degree');
+CC = centrality(Undir_Ch,'closeness');
+CE = centrality(Undir_Ch,'eigenvector');
+CB = centrality(Undir_Ch,'betweenness');       
+clear Undir_Ch
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %DEGREE CENTRALITY%
+[Chebyshev_CD,Index_Ch_CD] = sort(CD,'descend');
+Chebyshev1 = Chebyshev_CD(:);
+Chebyshevgenes1 =genenames(Index_Ch_CD(:));
+top_Chebyshev1 = Chebyshev_CD(1:400,:);
+top_Chebyshevgenes1 =genenames(Index_Ch_CD(1:400,:));
+clear Chebyshev_CD
+clear Index_Ch_CD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                           %CLOSENESS CENTRALITY%
+[Chebyshev_CC,Index_Ch_CC] = sort(CC,'descend');
+Chebyshev2 = Chebyshev_CC(:);
+Chebyshevgenes2 =genenames(Index_Ch_CC(:));
+top_Chebyshev2 = Chebyshev_CC(1:400,:);
+top_Chebyshevgenes2 =genenames(Index_Ch_CC(1:400,:));
+clear Chebyshev_CC
+clear Index_Ch_CC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %BETWEENNESS CENTRALITY%
+[Chebyshev_CB,Index_Ch_CB] = sort(CB,'descend');
+Chebyshev3 = Chebyshev_CB(:);
+Chebyshevgenes3 =genenames(Index_Ch_CB(:));
+top_Chebyshev3 = Chebyshev_CB(1:400,:);
+top_Chebyshevgenes3 =genenames(Index_Ch_CB(1:400,:));
+clear Chebyshev_CB
+clear Index_Ch_CB
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                            %EIGENVECTOR CENTRALITY%
+[Chebyshev_CE,Index_Ch_CE] = sort(CE,'descend');
+Chebyshev4 = Chebyshev_CE(:);
+Chebyshevgenes4 =genenames(Index_Ch_CE(:));
+top_Chebyshev4 = Chebyshev_CE(1:400,:);
+top_Chebyshevgenes4 =genenames(Index_Ch_CE(1:400,:));
+clear Chebyshev_CE
+clear Index_Ch_CE
+clear FinalCh
+clear Chebyshev_D
+clear CB
+clear CC
+clear CD
+clear CE
+clear Cell
+clear genesindex
+clear genes_frequencies
+clear Index_all
+clear Index_cell
+clear genenames
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
