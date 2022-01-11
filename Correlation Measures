@@ -24,7 +24,7 @@ clear MetData1
                             %Diseased%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 MetDataD = MetData(:,1:7);
-TMetDataD=transpose(MetDataD.double());
+TMetDataD=transpose(MetDataD);
 clear MetDataD
 clear MetData
 clear MetDataND
